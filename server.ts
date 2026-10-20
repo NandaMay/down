@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import fs from 'fs';
 import http from 'http';
 import path from 'path';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 
@@ -513,29 +514,41 @@ async function startServer() {
     }
   });
 
-  // API 5: Direct Android APK File Download (.apk)
-  const sendNandaSheinApk = (_req: Request, res: Response) => {
-    const candidates = [
-      path.resolve(process.cwd(), 'Nanda_Shein_Downloader.apk'),
-      path.resolve(__dirname, 'Nanda_Shein_Downloader.apk'),
-      path.resolve(__dirname, 'public', 'Nanda_Shein_Downloader.apk'),
-      path.resolve('/Nanda_Shein_Downloader.apk'),
-    ];
-    for (const file of candidates) {
-      if (fs.existsSync(file)) {
-        res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-        res.setHeader('Content-Disposition', 'attachment; filename="Nanda_Shein_Downloader.apk"');
-        return res.sendFile(file);
-      }
+  // API 5: Download Source Code ZIP for GitHub
+  app.get('/api/download-zip', (_req: Request, res: Response) => {
+    try {
+      const zipPath = path.resolve(process.cwd(), 'dev-dist', 'nanda-shein-downloader.zip');
+      fs.mkdirSync(path.dirname(zipPath), { recursive: true });
+      execSync(`python3 -c "import zipfile, os
+with zipfile.ZipFile('${zipPath}', 'w', zipfile.ZIP_DEFLATED) as z:
+  for root, dirs, files in os.walk('.'):
+    if any(x in root for x in ['.git', 'node_modules', 'dist', 'dev-dist']): continue
+    for f in files:
+      if f.endswith(('.zip', '.apk', '.log')): continue
+      p = os.path.join(root, f)
+      z.write(p, os.path.relpath(p, '.'))
+"`);
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', 'attachment; filename="nanda-shein-downloader.zip"');
+      return res.sendFile(zipPath);
+    } catch (e) {
+      console.error('Failed to create zip', e);
+      return res.status(500).send('Failed to generate source zip');
     }
-    return res.status(404).json({ error: 'APK file not found' });
-  };
+  });
 
-  app.get('/api/download-apk', sendNandaSheinApk);
-  app.get('/Nanda_Shein_Downloader.apk', sendNandaSheinApk);
-
-  // Static downloads folder
-  app.use('/downloads', express.static(path.resolve(__dirname, 'public', 'downloads')));
+  // API 6: Git info endpoint
+  app.get('/api/git-info', (_req: Request, res: Response) => {
+    res.json({
+      success: true,
+      data: {
+        branch: 'main',
+        author: 'Nanda Shein',
+        email: 'nandashein158@gmail.com',
+        repoName: 'nanda-shein-downloader',
+      },
+    });
+  });
 
   const httpServer = http.createServer(app);
 

@@ -158,7 +158,7 @@ export const SettingsTab: React.FC<Props> = ({
             : 'No login required. All social media video downloads are streamed privately and saved directly to your device.'}
         </p>
         <div className="pt-2 text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/80">
-          <span>Nanda Shein Downloader APK v1.0.0</span>
+          <span>Nanda Shein Downloader Web v1.0.0</span>
           <span>Engine: High-Bitrate 1080P</span>
         </div>
       </div>

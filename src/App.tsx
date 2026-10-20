@@ -3,11 +3,12 @@ import {
   Download,
   FolderDown,
   Layers,
-  Smartphone,
   Settings,
   Sparkles,
   WifiOff,
   Globe,
+  Github,
+  Video,
 } from 'lucide-react';
 import {
   ActiveTab,
@@ -17,25 +18,23 @@ import {
   DownloadTask,
 } from './types';
 import { translations } from './utils/translations';
-import { AndroidStatusBar } from './components/AndroidStatusBar';
-import { PWAInstallBanner } from './components/PWAInstallBanner';
 import { DownloaderTab } from './components/DownloaderTab';
 import { DownloadsTab } from './components/DownloadsTab';
 import { BatchTab } from './components/BatchTab';
-import { ApkGuideTab } from './components/ApkGuideTab';
+import { GitHubTab } from './components/GitHubTab';
 import { SettingsTab } from './components/SettingsTab';
 import { VideoPlayerModal } from './components/VideoPlayerModal';
 import { FormatSelectorModal } from './components/FormatSelectorModal';
 
-const STORAGE_KEY_DOWNLOADS = 'snapsave_downloads_v1';
-const STORAGE_KEY_LANG = 'snapsave_lang_v1';
-const STORAGE_KEY_QUALITY = 'snapsave_quality_v1';
+const STORAGE_KEY_DOWNLOADS = 'nandashein_downloads_v1';
+const STORAGE_KEY_LANG = 'nandashein_lang_v1';
+const STORAGE_KEY_QUALITY = 'nandashein_quality_v1';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('downloader');
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEY_LANG);
-    return saved === 'en' ? 'en' : 'my'; // Default to Myanmar for the user
+    return saved === 'en' ? 'en' : 'my'; // Default to Myanmar
   });
   const [preferredQuality, setPreferredQuality] = useState<string>(() => {
     return localStorage.getItem(STORAGE_KEY_QUALITY) || '1080p';
@@ -222,67 +221,129 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
-      {/* Top Android Status Bar */}
-      <AndroidStatusBar />
-
-      {/* Main Container / Mobile Frame Wrapper */}
-      <div className="w-full max-w-xl mx-auto flex-1 flex flex-col relative px-2 sm:px-4">
-        {/* Top App Bar Header */}
-        <header className="py-3 px-2 flex items-center justify-between border-b border-slate-900 sticky top-0 bg-slate-950/90 backdrop-blur-md z-20">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-              <Download className="w-5 h-5 text-white" />
+      {/* Responsive Web Header */}
+      <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          {/* Logo & Branding */}
+          <div
+            onClick={() => setActiveTab('downloader')}
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+              <Video className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-sm font-extrabold tracking-tight text-white">
+              <div className="flex items-center gap-2">
+                <h1 className="text-base font-extrabold tracking-tight text-white group-hover:text-indigo-300 transition">
                   Nanda Shein <span className="text-indigo-400">Downloader</span>
                 </h1>
-                <span className="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-md shadow-sm">
-                  1080P APK
+                <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  1080P Web
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400 leading-none">
-                {language === 'my' ? 'ရေစာမပါ 1080P HD ဒေါင်းလုဒ်' : 'Social Video Downloader'}
+              <p className="text-[11px] text-slate-400 leading-none mt-0.5">
+                {language === 'my'
+                  ? 'Social Media 1080P HD Video Downloader'
+                  : 'Social Media Video Downloader Web App'}
               </p>
             </div>
           </div>
 
+          {/* Desktop Navigation Tabs */}
+          <nav className="hidden md:flex items-center gap-1 bg-slate-900/80 border border-slate-800 p-1 rounded-2xl">
+            <button
+              onClick={() => setActiveTab('downloader')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                activeTab === 'downloader'
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {t.navDownloader}
+            </button>
+            <button
+              onClick={() => setActiveTab('downloads')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 ${
+                activeTab === 'downloads'
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <span>{t.navDownloads}</span>
+              {downloads.length > 0 && (
+                <span className="bg-slate-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                  {downloads.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('batch')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                activeTab === 'batch'
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {t.navBatch}
+            </button>
+            <button
+              onClick={() => setActiveTab('github')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1 ${
+                activeTab === 'github'
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Github className="w-3.5 h-3.5" />
+              <span>{t.navGitHub}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                activeTab === 'settings'
+                  ? 'bg-indigo-600 text-white shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {t.navSettings}
+            </button>
+          </nav>
+
           {/* Quick Header Actions */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveTab('github')}
+              className="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-semibold px-3 py-1.5 rounded-xl transition"
+              title="GitHub & Source"
+            >
+              <Github className="w-4 h-4 text-white" />
+              <span className="hidden sm:inline">GitHub</span>
+            </button>
+
             <button
               onClick={() => handleLanguageChange(language === 'my' ? 'en' : 'my')}
-              className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-slate-300 text-[11px] font-semibold px-2.5 py-1.5 rounded-xl border border-slate-800 transition"
+              className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-800 transition"
               title="Change Language"
             >
               <Globe className="w-3.5 h-3.5 text-indigo-400" />
               <span>{language === 'my' ? 'EN' : 'မြန်မာ'}</span>
             </button>
-
-            <button
-              id="tab-apk"
-              onClick={() => setActiveTab('apk')}
-              className="flex items-center gap-1 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl hover:bg-emerald-500/30 transition active:scale-95"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-emerald-400" />
-              <span>APK</span>
-            </button>
           </div>
-        </header>
+        </div>
+      </header>
 
+      {/* Main Container */}
+      <div className="w-full max-w-4xl mx-auto flex-1 flex flex-col relative px-3 sm:px-6 py-5">
         {/* Offline Warning Banner */}
         {!isOnline && (
-          <div className="mx-2 mt-2 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-3 py-2 rounded-xl text-xs flex items-center gap-2">
+          <div className="mb-4 bg-amber-500/10 border border-amber-500/30 text-amber-300 px-3 py-2 rounded-2xl text-xs flex items-center gap-2">
             <WifiOff className="w-4 h-4 text-amber-400" />
             <span>အင်တာနက်ပြတ်တောက်နေပါသည် (Offline Mode)</span>
           </div>
         )}
 
-        {/* Direct Android APK download banner */}
-        <PWAInstallBanner language={language} onOpenApkTab={() => setActiveTab('apk')} />
-
         {/* Tab Content Router */}
-        <main className="flex-1 mt-4 px-2">
+        <main className="flex-1">
           {activeTab === 'downloader' && (
             <DownloaderTab
               language={language}
@@ -307,7 +368,7 @@ export default function App() {
             <BatchTab language={language} onDownload={triggerDownload} />
           )}
 
-          {activeTab === 'apk' && <ApkGuideTab language={language} />}
+          {activeTab === 'github' && <GitHubTab language={language} />}
 
           {activeTab === 'settings' && (
             <SettingsTab
@@ -324,7 +385,7 @@ export default function App() {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border border-indigo-500/50 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-semibold backdrop-blur-md animate-bounce">
+        <div className="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border border-indigo-500/50 text-white px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2 text-xs font-semibold backdrop-blur-md animate-bounce">
           <Sparkles className="w-4 h-4 text-indigo-400" />
           <span>{toastMessage}</span>
         </div>
@@ -355,8 +416,8 @@ export default function App() {
         />
       )}
 
-      {/* Bottom Android Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-900 py-1.5 px-3 z-40 max-w-xl mx-auto">
+      {/* Mobile Bottom Navigation Bar (Hidden on Desktop) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-900 py-1.5 px-3 z-40 max-w-xl mx-auto">
         <div className="flex items-center justify-around">
           <button
             onClick={() => setActiveTab('downloader')}
@@ -400,16 +461,15 @@ export default function App() {
           </button>
 
           <button
-            onClick={() => setActiveTab('apk')}
+            onClick={() => setActiveTab('github')}
             className={`relative flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
-              activeTab === 'apk'
-                ? 'text-emerald-400 font-bold'
+              activeTab === 'github'
+                ? 'text-indigo-400 font-bold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Smartphone className="w-5 h-5" />
-            <span className="text-[10px]">{language === 'my' ? 'APK ဒေါင်းမည်' : 'APK'}</span>
-            <span className="absolute -top-1 right-2 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <Github className="w-5 h-5" />
+            <span className="text-[10px]">GitHub</span>
           </button>
 
           <button

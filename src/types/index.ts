@@ -44,5 +44,5 @@ export interface DownloadTask {
   downloadedAt: number;
 }
 
-export type ActiveTab = 'downloader' | 'downloads' | 'batch' | 'apk' | 'settings';
+export type ActiveTab = 'downloader' | 'downloads' | 'batch' | 'github' | 'settings';
 export type Language = 'my' | 'en';
