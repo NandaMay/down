@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F46E5"/>
+      <stop offset="0.5" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#EC4899"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="120" y1="120" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#A855F7"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="180" fill="#0F172A" fill-opacity="0.5" stroke="#FFFFFF" stroke-opacity="0.2" stroke-width="4"/>
+  <!-- Download arrow & play combo -->
+  <path d="M256 160V320M256 320L196 260M256 320L316 260" stroke="#FFFFFF" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M160 360H352" stroke="#38BDF8" stroke-width="32" stroke-linecap="round"/>
+  <!-- 1080P Badge -->
+  <rect x="180" y="396" width="152" height="42" rx="21" fill="url(#glow)"/>
+  <text x="256" y="424" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="22" letter-spacing="2">1080P HD</text>
+</svg>

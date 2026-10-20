@@ -1,0 +1,6 @@
+{
+  "name": "SnapSave Pro - 1080P Social Video Downloader APK",
+  "description": "Download 1080P Full HD videos without watermark from TikTok, Facebook, Instagram, YouTube & Twitter. Android APK and PWA installable with high-speed download manager.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
